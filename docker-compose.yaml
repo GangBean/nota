@@ -1,0 +1,37 @@
+services:
+  # PostgreSQL 데이터베이스 서비스
+  nota-db:
+    image: postgres:14
+    container_name: nota-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nota
+    volumes:
+      - nota-db:/var/lib/postgresql/data
+    networks:
+      - nota-network
+    ports:
+      - "5432:5432"
+
+  # FastAPI 서버
+  nota-server:
+    build: ./app
+    container_name: nota-server
+    restart: always
+    depends_on:
+      - nota-db
+    environment:
+      DATABASE_URL: postgresql://postgres:password@nota-db:5432/nota
+    networks:
+      - nota-network
+    ports:
+      - "8000:8000"
+
+volumes:
+  nota-db:
+
+networks:
+  nota-network:
+    driver: bridge

@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = ""
+authors = ["GangBean <xbox2537@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+psycopg2-binary = "^2.9.10"
+fastapi = "^0.115.10"
+gunicorn = "^23.0.0"
+pydantic = {extras = ["email"], version = "^2.10.6"}
+sqlalchemy = "^2.0.38"
+python-dotenv = "^1.0.1"
+uvicorn = "^0.34.0"
+passlib = "^1.7.4"
+python-jose = "^3.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
