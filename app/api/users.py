@@ -7,7 +7,7 @@ from auth import create_access_token, hash_password, verify_password
 
 router = APIRouter()
 
-@router.post("/users", response_model=UserResponse)
+@router.post("/users", response_model=UserResponse, tags=["Users"], summary="사용자 등록")
 def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
@@ -20,7 +20,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.post("/auth/tokens")
+@router.post("/auth/tokens", tags=["Auths"], summary="토큰 생성")
 def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if not db_user or not verify_password(user.password, db_user.password):

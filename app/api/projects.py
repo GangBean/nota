@@ -6,7 +6,7 @@ from models import Project
 
 router = APIRouter()
 
-@router.post("/projects", response_model=ProjectResponse)
+@router.post("/projects", response_model=ProjectResponse, tags=["Projects"], summary="프로젝트 생성")
 def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
     new_project = Project(name=project.name, owner_id=project.owner_id)
     db.add(new_project)
@@ -14,14 +14,14 @@ def create_project(project: ProjectCreate, db: Session = Depends(get_db)):
     db.refresh(new_project)
     return new_project
 
-@router.get("/projects/{project_id}", response_model=ProjectResponse)
+@router.get("/projects/{project_id}", response_model=ProjectResponse, tags=["Projects"], summary="프로젝트 조회")
 def get_project(project_id: int, db: Session = Depends(get_db)):
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
     return project
 
-@router.delete("/projects/{project_id}")
+@router.delete("/projects/{project_id}", tags=["Projects"], summary="프로젝트 삭제")
 def delete_project(project_id: int, db: Session = Depends(get_db)):
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
