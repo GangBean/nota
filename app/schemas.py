@@ -32,3 +32,11 @@ class ProjectResponse(BaseModel):
     class Config:
         orm_mode = True
 
+# 프로젝트 수정 스키마 (PATCH 요청 처리)
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None  # 프로젝트 이름 수정 가능
+    owner_id: Optional[int] = None  # 프로젝트 소유자 변경 가능
+
+# 역할 생성 스키마 추가
+class RoleCreate(BaseModel):
+    name: str  # 역할 이름 필수

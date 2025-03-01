@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
-from api import users, projects, auth
+from api import users, projects, roles, teams
 from database import engine, Base, SessionLocal
 from fastapi.openapi.utils import get_openapi
 import models
@@ -48,9 +48,10 @@ def custom_openapi():
 app.openapi = custom_openapi
 
 # API 라우트 추가
-app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(projects.router, prefix="/projects", tags=["Projects"])
+app.include_router(teams.router, prefix="/teams", tags=["Teams"])
+app.include_router(roles.router, prefix="/roles", tags=["Roles"])
 
 @app.get("/")
 def read_root():
