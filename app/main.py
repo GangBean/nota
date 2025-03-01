@@ -1,10 +1,28 @@
 from fastapi import FastAPI
+from fastapi.concurrency import asynccontextmanager
 from api import users, projects, auth
-from database import engine, Base
+from database import engine, Base, SessionLocal
 from fastapi.openapi.utils import get_openapi
+import models
 
 # DB 테이블 생성
 Base.metadata.create_all(bind=engine)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("FastAPI 서버가 시작되었습니다.")
+    
+    # 데이터베이스 초기화 (기본 테넌트 확인 및 생성)
+    db = SessionLocal()
+    if not db.query(models.Tenant).filter(models.Tenant.id == 0).first():
+        db.add(models.Tenant(id=0, name="Default Tenant"))
+        db.commit()
+        print("기본 테넌트가 생성되었습니다.")
+    db.close()
+
+    yield  # 앱 실행 중
+
+    print("FastAPI 서버가 종료됩니다.")
 
 app = FastAPI(
     title="Nota API",
@@ -12,6 +30,7 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 def custom_openapi():
@@ -36,4 +55,3 @@ app.include_router(projects.router, prefix="/projects", tags=["Projects"])
 @app.get("/")
 def read_root():
     return {"message": "Welcome to Nota API"}
-
