@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from database import get_db
 from schemas import UserCreate, UserLogin, UserResponse
@@ -29,13 +29,18 @@ def verify_email(email: str, code: str, db: Session = Depends(get_db)):
 
 # 로그인 (JWT 발급)
 @router.post("/auth/tokens", tags=["Users"], summary="로그인")
-def login(user: UserLogin, db: Session = Depends(get_db)):
+def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
+    
     if not db_user or not verify_password(user.password, db_user.password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     token = create_access_token(db_user.id)
-    return {"access_token": token}
+
+    # Authorization 헤더에 Bearer Token 설정
+    response.headers["Authorization"] = f"Bearer {token}"
+    
+    return {"message": "Login successful"}
 
 # 비밀번호 재설정 요청 (이메일 발송)
 @router.post("/users/password-reset-requests", tags=["Users"], summary="비밀번호 재설정 요청")

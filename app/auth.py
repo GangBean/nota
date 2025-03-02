@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from jose import jwt
 
 SECRET_KEY = "secret"
@@ -14,6 +14,6 @@ def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 def create_access_token(user_id: int):
-    expire = datetime.now(datetime.UTC) + timedelta(hours=1)
+    expire = datetime.now(UTC) + timedelta(hours=1)
     payload = {"sub": str(user_id), "exp": expire}
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
