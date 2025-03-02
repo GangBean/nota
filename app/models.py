@@ -43,6 +43,7 @@ class Role(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
+    permissions = relationship("ApiPermission", secondary=role_api_permission)
 
 # API 권한
 class ApiPermission(Base):
@@ -50,8 +51,8 @@ class ApiPermission(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
-    endpoint = Column(String)
-    method = Column(String)
+    endpoint = Column(String, nullable=False)
+    method = Column(String, nullable=False)
 
 # 프로젝트
 class Project(Base):

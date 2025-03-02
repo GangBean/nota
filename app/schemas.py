@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 
 # 사용자 스키마
 class UserCreate(BaseModel):
@@ -40,3 +40,14 @@ class ProjectUpdate(BaseModel):
 # 역할 생성 스키마 추가
 class RoleCreate(BaseModel):
     name: str  # 역할 이름 필수
+
+class ApiPermissionResponse(BaseModel):
+    id: int
+    name: str
+    endpoint: str
+    method: str
+
+class RoleResponse(BaseModel):
+    id: int
+    name: str
+    permissions: List[ApiPermissionResponse]  # 역할별 API 권한 포함

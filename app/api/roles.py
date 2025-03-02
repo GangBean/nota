@@ -1,15 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from database import get_db
 from models import Role, ApiPermission
-from schemas import RoleCreate
+from schemas import RoleCreate, RoleResponse
 
 router = APIRouter()
 
 # 역할 목록 조회
-@router.get("/roles", tags=["Roles"], summary="역할 목록 조회")
+@router.get("/roles", response_model=list[RoleResponse], tags=["Roles"], summary="역할 목록 조회")
 def get_roles(db: Session = Depends(get_db)):
-    roles = db.query(Role).all()
+    roles = db.query(Role).options(joinedload(Role.permissions)).all()  # ✅ JOIN 활용
+    
     return roles
 
 # 새로운 역할 생성 (관리자)
